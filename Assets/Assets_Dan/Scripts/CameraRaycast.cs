@@ -59,10 +59,11 @@ public class CameraRaycast : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             m_IsDragging = false;
-            m_CurrentSelected.IsInteracting = false;
 
             if (m_CurrentSelected)
             {
+                m_CurrentSelected.IsInteracting = false;
+
                 if (!m_CurrentSelected.CheckCollisions())
                     m_CurrentSelected.transform.position = m_StartPosition;
             }
@@ -93,10 +94,11 @@ public class CameraRaycast : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse1))
         {
             m_IsRotating = false;
-            m_CurrentSelected.IsInteracting = false;
 
             if (m_CurrentSelected)
             {
+                m_CurrentSelected.IsInteracting = false;
+
                 if (!m_CurrentSelected.CheckCollisions())
                     m_CurrentSelected.transform.eulerAngles = new Vector3(0f, m_StartRotation, 0f);
             }
