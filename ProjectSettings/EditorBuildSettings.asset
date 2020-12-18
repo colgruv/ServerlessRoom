@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Assets_Dan/Scenes/ServerlessRoom.unity
+    guid: 29136f78310752d4ab8da13576f41252
   m_configObjects: {}
