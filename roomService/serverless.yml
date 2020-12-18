@@ -1,0 +1,61 @@
+service: room-service
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  environment:
+    ITEMS_TABLE: itemsTable
+  iamRoleStatements:
+  - Effect: Allow
+    Action: 
+    - dynamodb:Query
+    - dynamodb:Scan
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    Resource: "*"
+
+functions:
+  putItems:
+    handler: handler.putItems
+    events:
+      - http:
+          path: item
+          method: put
+          cors: true
+  getItems:
+    handler: handler.getItems
+    events:
+      - http:
+          path: item
+          method: get
+          cors: true
+  listRooms:
+    handler: handler.listRooms
+    events:
+      - http:
+          path: room
+          method: get
+          cors: true
+    
+
+resources:
+  Resources:
+    itemsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: itemsTable
+        AttributeDefinitions:
+          - AttributeName: roomId
+            AttributeType: S
+          - AttributeName: itemId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roomId
+            KeyType: HASH
+          - AttributeName: itemId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
