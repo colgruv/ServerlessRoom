@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraRaycast : MonoBehaviour
 {
+    public GameObject HintDisplay;
+
     private Camera m_Camera;
     private RaycastItem m_CurrentSelected;
     private bool m_IsDragging, m_IsRotating;
@@ -30,6 +32,7 @@ public class CameraRaycast : MonoBehaviour
         if (m_IsDragging || m_IsRotating)
             return;
 
+        HintDisplay.SetActive(false);
         if (Physics.Raycast(m_Camera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit))
         {
             Transform objectHit = hit.transform;
@@ -44,6 +47,7 @@ public class CameraRaycast : MonoBehaviour
             RaycastItem item = objectHit.GetComponent<RaycastItem>();
             if (item)
             {
+                HintDisplay.SetActive(true);
                 m_CurrentSelected = item;
                 m_CurrentSelected.IsHighlighted = true;
             }

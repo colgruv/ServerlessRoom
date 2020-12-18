@@ -50,6 +50,7 @@ public class MenuController : MonoBehaviour
 
     private IEnumerator SendUploadRequest()
     {
+        // Capture positions and rotations of all GameObjects and convert to Json
         string json = "{\"items\":[";
         for (int i = 0; i < RaycastItems.Length; i++)
         {
@@ -63,8 +64,8 @@ public class MenuController : MonoBehaviour
                 json += ",";
         }
         json += "]}";
-        Debug.Log(json);
 
+        // Upload batch of items
         UnityWebRequest www = UnityWebRequest.Put("https://2zipwmez7a.execute-api.us-east-1.amazonaws.com/dev/item", json);
         www.SetRequestHeader("Content-Type", "application/json");
         yield return www.SendWebRequest();
@@ -77,8 +78,6 @@ public class MenuController : MonoBehaviour
         }
         else
         {
-            // Show results as text
-            Debug.Log(www.responseCode);
             ShowUploadMenu(false);
         }
     }
@@ -112,6 +111,7 @@ public class MenuController : MonoBehaviour
         }
         else
         {
+            // Parse items received
             Item[] items = JsonHelper.FromJson<Item>(www.downloadHandler.text);
 
             // Filter out duplicate RoomId entries
@@ -130,6 +130,11 @@ public class MenuController : MonoBehaviour
                 button.onClick.AddListener(delegate { Download(s); });
                 button.transform.SetParent(AvailableRoomsParent);
             }
+
+            // Adjust height of scrollable content area based on how many rooms were returned
+            Vector2 sizeDelta = AvailableRoomsParent.GetComponent<RectTransform>().sizeDelta;
+            sizeDelta.y = AvailableRoomsParent.childCount * 30f;
+            AvailableRoomsParent.GetComponent<RectTransform>().sizeDelta = sizeDelta;
         }
     }
 
@@ -146,16 +151,17 @@ public class MenuController : MonoBehaviour
         }
         else
         {
-            // Show results as text
+            // Parse items received
             Item[] items = JsonHelper.FromJson<Item>(www.downloadHandler.text);
 
             foreach (Item item in items)
             {
                 foreach (RaycastItem rc in RaycastItems)
                 {
+                    // Match itemId received to GameObject name in scene
                     if (item.itemId == rc.name)
                     {
-                        // Position
+                        // Apply position from DB item
                         string position = item.position.Trim(new char[] { ' ', '(', ')' });
                         string[] pComponents = position.Split(',');
                         rc.transform.position = new Vector3(
@@ -163,7 +169,7 @@ public class MenuController : MonoBehaviour
                             float.Parse(pComponents[1]), 
                             float.Parse(pComponents[2]));
 
-                        // Rotation
+                        // Apply rotation from DB item
                         string rotation = item.rotation.Trim(new char[] { ' ', '(', ')' });
                         string[] rComponents = rotation.Split(',');
                         rc.transform.rotation = new Quaternion(
